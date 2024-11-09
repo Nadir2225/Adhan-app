@@ -1,14 +1,19 @@
 package com.example.adhan.ui.viewModels
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
+import com.example.adhan.R
 import com.example.adhan.ui.workers.AdhanWorker
 import java.util.concurrent.TimeUnit
 
 class AdhanViewModel : ViewModel() {
+    private val _adhan: MutableLiveData<Int> = MutableLiveData(R.raw.a1)
+    val adhan: LiveData<Int> = _adhan
 
     fun scheduleAdhanAlarm(context: Context, delayInMillis: Long) {
         val adhanWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<AdhanWorker>()
@@ -16,5 +21,9 @@ class AdhanViewModel : ViewModel() {
             .build()
 
         WorkManager.getInstance(context).enqueue(adhanWorkRequest)
+    }
+
+    fun updateAdhan(newSheikh: Int) {
+        _adhan.value = newSheikh
     }
 }

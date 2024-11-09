@@ -1,42 +1,52 @@
 package com.example.adhan.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.example.adhan.models.PrayTime
+import com.example.adhan.ui.theme.dark
+import com.example.adhan.ui.viewModels.LocationViewModel
 import java.util.Calendar
 import java.util.TimeZone
 
 @Composable
-fun PrayerTimesScreen() {
-    // Example coordinates (latitude and longitude for your location)
-    val latitude = 34.0084 // Example: New York
-    val longitude = -6.8539 // Example: New York
-    val currentDate = "2024-11-09" // Example: today's date
-    val timezone = -5.0 // Example timezone (e.g., New York time is UTC -5)
+fun PrayerTimesScreen(locationViewModel: LocationViewModel) {
+    val latitude by locationViewModel.latitude.observeAsState()
+    val longitude by locationViewModel.longitude.observeAsState()
+
+    LaunchedEffect(Unit) {
+        if (longitude == null || latitude == null) {
+
+        }
+    }
+
 
     // Get prayer times for the specified location and date
-    val prayerTimes = getPrayerTimes(latitude, longitude)
+    val prayerTimes = latitude?.let { longitude?.let { it1 -> getPrayerTimes(it, it1) } }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(dark)) {
         Column(
             modifier = Modifier.align(Alignment.Center)
         ) {
             Text(text = "Prayer Times", textAlign = TextAlign.Center)
 
             // Display each prayer time in the list
-            Text(text = "Fajr: ${prayerTimes["fajr"]}")
-            Text(text = "Sunrise: ${prayerTimes["sunrise"]}")
-            Text(text = "Dhuhr: ${prayerTimes["duhr"]}")
-            Text(text = "Asr: ${prayerTimes["asr"]}")
-            Text(text = "Maghrib: ${prayerTimes["maghrib"]}")
-            Text(text = "Isha: ${prayerTimes["isha"]}")
+            Text(text = "Fajr: ${prayerTimes?.get("fajr")}")
+            Text(text = "Sunrise: ${prayerTimes?.get("sunrise")}")
+            Text(text = "Dhuhr: ${prayerTimes?.get("duhr")}")
+            Text(text = "Asr: ${prayerTimes?.get("asr")}")
+            Text(text = "Maghrib: ${prayerTimes?.get("maghrib")}")
+            Text(text = "Isha: ${prayerTimes?.get("isha")}")
         }
     }
 }

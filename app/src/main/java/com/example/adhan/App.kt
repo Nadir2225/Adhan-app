@@ -35,10 +35,11 @@ import com.example.adhan.ui.screens.PrayerTimesScreen
 import com.example.adhan.ui.screens.SettingsScreen
 import com.example.adhan.ui.theme.dark
 import com.example.adhan.ui.viewModels.AdhanViewModel
+import com.example.adhan.ui.viewModels.LocationViewModel
 
 
 @Composable
-fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, checkPermissions: () -> Boolean) {
+fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, locationViewModel: LocationViewModel, checkPermissions: () -> Boolean) {
     val navController = rememberNavController()
     val context = LocalContext.current
 
@@ -47,6 +48,8 @@ fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, chec
             globalNavController.navigate(Screen.NoPermission.route) {
                 popUpTo(0)
             }
+        } else {
+            locationViewModel.getLocation()
         }
     }
 
@@ -59,8 +62,8 @@ fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, chec
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Compass.route) { CompassScreen(navController = navController) }
-            composable(Screen.PrayerTimes.route) { PrayerTimesScreen() }
-            composable(Screen.Settings.route) { SettingsScreen() }
+            composable(Screen.PrayerTimes.route) { PrayerTimesScreen(locationViewModel = locationViewModel) }
+            composable(Screen.Settings.route) { SettingsScreen(adhanViewModel = adhanViewModel) }
         }
     }
 }
@@ -73,9 +76,7 @@ fun BottomNavigationBar(navController: NavController) {
     }
 
     BottomAppBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = dark),
+        modifier = Modifier.fillMaxWidth(),
         content = {
             IconButton(onClick = {
                 selected.value = Icons.Filled.DateRange
@@ -104,6 +105,7 @@ fun BottomNavigationBar(navController: NavController) {
                 Icon( Icons.Filled.Settings, "settings",
                     tint = if (selected.value == Icons.Filled.Settings) Color(0xFFCE8920) else Color.White)
             }
-        }
+        },
+        containerColor = Color(0xff424242)
     )
 }

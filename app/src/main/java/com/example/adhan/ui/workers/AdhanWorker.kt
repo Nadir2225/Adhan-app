@@ -6,6 +6,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -62,5 +64,9 @@ class AdhanWorker(context: Context, workerParams: WorkerParameters) : Worker(con
             .build()
 
         notificationManager.notify(notificationId, notification)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            notificationManager.cancel(notificationId)
+        }, 60000)
     }
 }
