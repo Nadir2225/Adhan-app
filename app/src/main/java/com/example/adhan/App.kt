@@ -59,7 +59,7 @@ fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, chec
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Compass.route) { CompassScreen(navController = navController) }
-            composable(Screen.PrayerTimes.route) { PrayerTimesScreen(adhanViewModel) }
+            composable(Screen.PrayerTimes.route) { PrayerTimesScreen() }
             composable(Screen.Settings.route) { SettingsScreen() }
         }
     }
