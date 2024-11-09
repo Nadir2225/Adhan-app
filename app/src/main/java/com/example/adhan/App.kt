@@ -2,6 +2,8 @@ package com.example.adhan
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,16 +33,17 @@ import com.example.adhan.ui.screens.CompassScreen
 import com.example.adhan.ui.screens.NoPermissionScreen
 import com.example.adhan.ui.screens.PrayerTimesScreen
 import com.example.adhan.ui.screens.SettingsScreen
-
+import com.example.adhan.ui.theme.dark
+import com.example.adhan.ui.viewModels.AdhanViewModel
 
 
 @Composable
-fun App(globalNavController: NavController) {
+fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, checkPermissions: () -> Boolean) {
     val navController = rememberNavController()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        if (checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (!checkPermissions()) {
             globalNavController.navigate(Screen.NoPermission.route) {
                 popUpTo(0)
             }
@@ -55,8 +58,8 @@ fun App(globalNavController: NavController) {
             startDestination = Screen.PrayerTimes.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(Screen.Compass.route) { CompassScreen() }
-            composable(Screen.PrayerTimes.route) { PrayerTimesScreen() }
+            composable(Screen.Compass.route) { CompassScreen(navController = navController) }
+            composable(Screen.PrayerTimes.route) { PrayerTimesScreen(adhanViewModel) }
             composable(Screen.Settings.route) { SettingsScreen() }
         }
     }
@@ -64,13 +67,15 @@ fun App(globalNavController: NavController) {
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
+
     val selected = remember {
-        mutableStateOf(Icons.Filled.LocationOn)
+        mutableStateOf(Icons.Filled.DateRange)
     }
+
     BottomAppBar(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color(0xFF1D1D1D)),
+            .background(color = dark),
         content = {
             IconButton(onClick = {
                 selected.value = Icons.Filled.DateRange

@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -24,13 +25,38 @@ import com.example.adhan.ui.screens.NoPermissionScreen
 import com.example.adhan.ui.screens.PrayerTimesScreen
 import com.example.adhan.ui.screens.SettingsScreen
 import com.example.adhan.ui.theme.AdhanTheme
+import com.example.adhan.ui.viewModels.AdhanViewModel
 import com.example.adhan.ui.viewModels.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
-//    ACCESS_COARSE_LOCATION
-    private val permission = Manifest.permission.ACCESS_COARSE_LOCATION
+    private val adhanViewModel: AdhanViewModel by viewModels()
+
+
+    private val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        mapOf(
+            "location" to Manifest.permission.ACCESS_COARSE_LOCATION,
+            "notifications" to Manifest.permission.POST_NOTIFICATIONS
+        )
+    } else {
+        mapOf(
+            "location" to Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    }
+
+    private fun checkPermissions(): Boolean {
+        var granted = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (permissions["notifications"]?.let { checkSelfPermission(it) } != PackageManager.PERMISSION_GRANTED) {
+                granted = false
+            }
+        }
+        if (permissions["location"]?.let { checkSelfPermission(it) } != PackageManager.PERMISSION_GRANTED) {
+            granted = false
+        }
+        return granted
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +66,11 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) Screen.App.route else Screen.NoPermission.route
+                    startDestination = if (checkPermissions()) Screen.App.route else Screen.NoPermission.route
                 ) {
-                    composable(Screen.App.route) { App(navController) }
-                    composable(Screen.NoPermission.route) { NoPermissionScreen(mainViewModel = mainViewModel, navController = navController, permission = permission) }
+                    composable(Screen.App.route) { App(navController, adhanViewModel, { checkPermissions() }) }
+                    composable(Screen.NoPermission.route) { NoPermissionScreen(mainViewModel = mainViewModel, navController = navController, permissions = permissions,
+                        { checkPermissions() }) }
                 }
             }
         }
