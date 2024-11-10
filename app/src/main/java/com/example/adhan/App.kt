@@ -18,6 +18,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -42,6 +44,7 @@ import com.example.adhan.ui.viewModels.LocationViewModel
 fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, locationViewModel: LocationViewModel, checkPermissions: () -> Boolean) {
     val navController = rememberNavController()
     val context = LocalContext.current
+    val route by adhanViewModel.route.observeAsState()
 
     LaunchedEffect(Unit) {
         if (!checkPermissions()) {
@@ -54,11 +57,11 @@ fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, loca
     }
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController) }
+        bottomBar = { BottomNavigationBar(navController = navController, adhanViewModel = adhanViewModel) }
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.PrayerTimes.route,
+            startDestination = route?:Screen.PrayerTimes.route,
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Screen.Compass.route) { CompassScreen(navController = navController) }
@@ -69,10 +72,16 @@ fun App(globalNavController: NavController, adhanViewModel: AdhanViewModel, loca
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavController, adhanViewModel: AdhanViewModel) {
+    val route by adhanViewModel.route.observeAsState()
 
     val selected = remember {
-        mutableStateOf(Icons.Filled.DateRange)
+        when (route) {
+            Screen.PrayerTimes.route -> mutableStateOf(Icons.Filled.DateRange)
+            Screen.Compass.route -> mutableStateOf(Icons.Filled.LocationOn)
+            Screen.Settings.route -> mutableStateOf(Icons.Filled.Settings)
+            else -> mutableStateOf(Icons.Filled.DateRange)
+        }
     }
 
     BottomAppBar(
@@ -80,6 +89,7 @@ fun BottomNavigationBar(navController: NavController) {
         content = {
             IconButton(onClick = {
                 selected.value = Icons.Filled.DateRange
+                adhanViewModel.updateRoute(Screen.PrayerTimes.route)
                 navController.navigate(Screen.PrayerTimes.route) {
                     popUpTo(0)
                 }
@@ -89,6 +99,7 @@ fun BottomNavigationBar(navController: NavController) {
             }
             IconButton(onClick = {
                 selected.value = Icons.Filled.LocationOn
+                adhanViewModel.updateRoute(Screen.Compass.route)
                 navController.navigate(Screen.Compass.route) {
                     popUpTo(0)
                 }
@@ -98,6 +109,7 @@ fun BottomNavigationBar(navController: NavController) {
             }
             IconButton(onClick = {
                 selected.value = Icons.Filled.Settings
+                adhanViewModel.updateRoute(Screen.Settings.route)
                 navController.navigate(Screen.Settings.route) {
                     popUpTo(0)
                 }
