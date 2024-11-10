@@ -34,7 +34,9 @@ fun CompassScreen(navController: NavController) {
             .background(dark)
     ) {
         Text(text = "this feature is coming soon", modifier = Modifier.align(Alignment.Center), color = Color.White)
-        Dialog(navController = navController)
+        if (isDialogShown) {
+            Dialog(navController = navController)
+        }
     }
 }
 

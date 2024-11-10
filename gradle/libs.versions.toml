@@ -1,5 +1,8 @@
 [versions]
+accompanistSystemuicontrollerVersion = "0.29.0-alpha"
 agp = "8.5.0"
+blurryVersion = "4.0.0"
+blurview = "1.6.0"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -14,11 +17,17 @@ navigationRuntimeKtx = "2.8.3"
 workRuntimeKtx = "2.10.0"
 playServicesLocation = "21.3.0"
 runtimeLivedata = "1.7.5"
+workRuntimeKtxVersion = "2.7.1"
 
 [libraries]
+accompanist-blur = { module = "com.google.accompanist:accompanist-blur", version.ref = "accompanistSystemuicontrollerVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-work-runtime-ktx-v271 = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
+blurry = { module = "jp.wasabeef:blurry", version.ref = "blurryVersion" }
+blurview = { module = "com.eightbitlab:blurview", version.ref = "blurview" }
+google-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontrollerVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
