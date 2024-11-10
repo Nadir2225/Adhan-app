@@ -40,7 +40,9 @@ class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
     private val locationViewModel: LocationViewModel by viewModels()
-    private val adhanViewModel: AdhanViewModel by viewModels()
+//    private val adhanViewModel: AdhanViewModel by viewModels()
+    private val adhanViewModel: AdhanViewModel
+        get() = (application as MyApplication).adhanViewModel
 
     private val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         mapOf(

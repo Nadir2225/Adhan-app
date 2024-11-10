@@ -27,7 +27,10 @@ class AdhanActivity : ComponentActivity() {
     private lateinit var notificationManager: NotificationManager
     private var mediaPlayer: MediaPlayer? = null
 
-    private val adhanViewModel: AdhanViewModel by viewModels()
+//    private val adhanViewModel: AdhanViewModel by viewModels()
+    private val adhanViewModel: AdhanViewModel
+        get() = (application as MyApplication).adhanViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
